@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News & Updates | justdo.day Minimalist Habit Tracker</title>
+    
+    <meta name="description" content="Latest news, feature updates, and development log for justdo.day, the minimalist anti-tracker for your daily habits.">
+    <meta property="og:title" content="News & Updates | justdo.day">
+    <meta property="og:description" content="Stay updated with the latest features and changes to your favorite minimalist habit tracker.">
+    <meta property="og:image" content="https://justdo.day/og-image.png">
+    <meta property="og:url" content="https://justdo.day/news.html">
+    <meta property="og:type" content="website">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="News & Updates | justdo.day">
+    <meta name="twitter:description" content="Stay updated with the latest features and changes.">
+    <meta name="twitter:image" content="https://justdo.day/og-image.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: { extend: { colors: { accent: '#FF5722' }, fontFamily: { sans: ['Neucha', 'Caveat', 'cursive', 'sans-serif'] } } }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Neucha&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-[#FCFBF9] text-black font-sans antialiased min-h-screen flex flex-col items-center">
+    <header class="w-full max-w-3xl px-6 pt-12 pb-8 flex justify-between items-end">
+        <a href="index.html" class="text-2xl font-extrabold tracking-tighter hover:opacity-70 transition-opacity">justdo.day</a>
+        <a href="index.html" class="text-sm font-semibold tracking-widest text-gray-400 uppercase hover:text-black transition-colors">Back to app</a>
+    </header>
+
+    <main class="w-full max-w-3xl px-6 py-12 flex-grow">
+        <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight mb-16">Updates Log</h1>
+        
+        <div class="space-y-20">
+            
+            <!-- Article Block -->
+            <article class="relative">
+                <div class="absolute -left-4 sm:-left-8 top-1.5 bottom-0 border-l-2 border-black/10"></div>
+                <div class="absolute -left-[21px] sm:-left-[37px] top-1.5 w-3 h-3 bg-accent rounded-full"></div>
+                
+                <div class="text-accent font-bold tracking-widest text-xs sm:text-sm uppercase mb-2">May 2026</div>
+                <h2 class="text-2xl sm:text-3xl font-bold tracking-tight mb-4">Version 1.0 is Live</h2>
+                
+                <div class="text-lg text-gray-600 leading-relaxed">
+                    <p class="mb-4">We've officially launched the MVP of justdo.day. The core features are fully functional right inside your browser without any registration required.</p>
+                    <ul class="list-disc pl-6 space-y-2 mb-6">
+                        <li><strong class="text-black">Track up to 3 habits:</strong> Focused minimalism to prevent burnout.</li>
+                        <li><strong class="text-black">The 2-Misses Rule:</strong> A realistic approach to consistency. One miss is okay, two breaks the chain.</li>
+                        <li><strong class="text-black">One-click Sharing:</strong> Generate beautiful images to post your streak to Instagram or Twitter directly from your device.</li>
+                    </ul>
+                    <p class="mb-4">We are currently working on a Pro version that will include user accounts, cloud sync, and cross-device support via email/Google authentication.</p>
+                </div>
+            </article>
+
+            <!-- Example for future blocks. You can just copy the article tag above to add more news. -->
+
+        </div>
+    </main>
+
+    <footer class="w-full text-center py-8 text-sm text-gray-400 border-t border-gray-100 mt-auto">
+        <div class="space-x-6">
+            <a href="index.html" class="hover:text-black transition-colors">App</a>
+            <a href="philosophy.html" class="hover:text-black transition-colors">Philosophy</a>
+            <a href="news.html" class="text-black font-semibold">News & Updates</a>
+        </div>
+    </footer>
+</body>
+</html>

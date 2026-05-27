@@ -1,0 +1,59 @@
+/* Reset user select for app feel */
+::selection {
+    background-color: black;
+    color: white;
+}
+
+body {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-family: 'Neucha', 'Caveat', cursive, sans-serif;
+}
+
+/* Interactive elements */
+button {
+    user-select: none;
+}
+
+input {
+    caret-color: #FF5722;
+    font-family: 'Neucha', 'Caveat', cursive, sans-serif;
+}
+
+.font-handwritten {
+    font-family: 'Neucha', 'Caveat', cursive, sans-serif;
+}
+
+/* Animations and transitions for the habit squares (Step 3/4) */
+.day-square {
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+}
+
+.day-square:not(.future-day):hover {
+    transform: scale(1.1);
+}
+
+.day-square:active {
+    transform: scale(0.95);
+}
+
+/* Future days aren't clickable */
+.future-day {
+    cursor: not-allowed;
+}
+
+/* Sketchy sprites background blending (Multiply blend mode to transparentize white backgrounds) */
+.day-square img,
+.edit-btn img,
+.share-btn img,
+header img,
+.flex img,
+#habits-list img,
+#export-container img {
+    mix-blend-mode: multiply;
+}
