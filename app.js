@@ -38,7 +38,7 @@ const Storage = {
         if (data.habits.length >= 3) return false;
         
         const newHabit = {
-            id: 'habit_' + Date.now(),
+            id: 'habit_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9),
             title: title.trim(),
             createdAt: Logic.formatDate(new Date()),
             history: {} 
@@ -60,6 +60,12 @@ const Storage = {
             habit.title = newTitle.trim();
             this.saveData(data);
         }
+    },
+
+    deleteHabit(id) {
+        const data = this.getData();
+        data.habits = data.habits.filter(h => h.id !== id);
+        this.saveData(data);
     }
 };
 
@@ -174,6 +180,21 @@ const App = {
 
     init() {
         const habits = Storage.getHabits();
+        
+        // Heal duplicate or missing IDs if any exist
+        let hasDuplicates = false;
+        const seenIds = new Set();
+        habits.forEach(habit => {
+            if (!habit.id || seenIds.has(habit.id)) {
+                habit.id = 'habit_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
+                hasDuplicates = true;
+            }
+            seenIds.add(habit.id);
+        });
+        if (hasDuplicates) {
+            Storage.saveData({ habits });
+        }
+
         if (habits && habits.length > 0) {
             this.showMainScreen();
         } else {
@@ -395,8 +416,11 @@ const App = {
                             <button id="modal-save-title-btn" class="w-full bg-black text-white py-3 rounded-full font-semibold hover:bg-gray-800 transition-colors font-handwritten">
                                 Save title (Keep progress)
                             </button>
-                            <button id="modal-reset-habit-btn" class="w-full bg-red-500 text-white py-3 rounded-full font-semibold hover:bg-red-600 transition-colors font-handwritten">
+                            <button id="modal-reset-habit-btn" class="w-full bg-orange-500 text-white py-3 rounded-full font-semibold hover:bg-orange-600 transition-colors font-handwritten">
                                 Change goal (Reset progress!)
+                            </button>
+                            <button id="modal-delete-habit-btn" class="w-full bg-red-500 text-white py-3 rounded-full font-semibold hover:bg-red-600 transition-colors font-handwritten">
+                                Delete habit (Permanently remove)
                             </button>
                             <button id="modal-cancel-edit-btn" class="w-full bg-gray-100 text-gray-500 py-3 rounded-full font-semibold hover:bg-gray-200 transition-colors font-handwritten">
                                 Cancel
@@ -410,6 +434,7 @@ const App = {
                 const modalContent = this.els.modalContent;
                 const saveTitleBtn = modalContent.querySelector('#modal-save-title-btn');
                 const resetHabitBtn = modalContent.querySelector('#modal-reset-habit-btn');
+                const deleteHabitBtn = modalContent.querySelector('#modal-delete-habit-btn');
                 const cancelEditBtn = modalContent.querySelector('#modal-cancel-edit-btn');
                 const titleInput = modalContent.querySelector('#edit-habit-title-input');
                 
@@ -438,6 +463,30 @@ const App = {
                         this.renderCalendar();
                         this.closeModal();
                         this.showNotification("Goal successfully updated, progress reset!", "fire");
+                    }
+                });
+
+                deleteHabitBtn.addEventListener('click', () => {
+                    if (confirm(`Are you sure you want to permanently delete the habit "${habit.title}"?`)) {
+                        Storage.deleteHabit(habit.id);
+                        this.closeModal();
+                        
+                        const remaining = Storage.getHabits();
+                        if (remaining.length === 0) {
+                            this.tempHabits = [];
+                            this.showOnboarding();
+                            this.els.habitInput.disabled = false;
+                            this.els.habitInput.placeholder = "e.g. Read 10 pages";
+                            this.els.habitInput.classList.remove('opacity-50');
+                            this.els.addHabitBtn.classList.remove('hidden');
+                            this.els.tempHabitsList.innerHTML = '';
+                            this.els.tempHabitsList.classList.add('hidden');
+                            this.els.startBtn.classList.add('hidden');
+                            this.els.habitsCounter.textContent = 'Added 0 of 3';
+                        } else {
+                            this.renderCalendar();
+                        }
+                        this.showNotification("Habit successfully deleted", "warning");
                     }
                 });
                 
@@ -617,6 +666,65 @@ const App = {
                 }
             });
         });
+
+        // Add "Add another habit" button under calendars if < 3
+        if (habits.length < 3) {
+            const addMoreContainer = document.createElement('div');
+            addMoreContainer.className = 'flex justify-center pt-8';
+            addMoreContainer.innerHTML = `
+                <button id="add-more-habit-btn" class="flex items-center space-x-2 border-2 border-dashed border-black/30 hover:border-black text-black/50 hover:text-black px-6 py-3 rounded-full transition-all duration-200 font-handwritten text-lg font-semibold bg-transparent cursor-pointer" style="font-family: 'Neucha', cursive;">
+                    <span class="text-xl font-bold">+</span>
+                    <span>Add another habit (${habits.length} of 3)</span>
+                </button>
+            `;
+            this.els.habitsList.appendChild(addMoreContainer);
+            
+            const btn = addMoreContainer.querySelector('#add-more-habit-btn');
+            btn.addEventListener('click', () => {
+                const addModalHTML = `
+                    <div class="space-y-4 text-left">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-500 mb-1 font-handwritten">Habit Title</label>
+                            <input type="text" id="new-habit-title-input" class="w-full text-xl font-bold font-handwritten border-b-2 border-black outline-none bg-transparent py-2 text-black focus:border-accent transition-colors" placeholder="e.g. Meditate for 10 min" maxlength="40" autocomplete="off">
+                        </div>
+                        
+                        <div class="flex flex-col space-y-2 pt-4">
+                            <button id="modal-add-habit-btn" class="w-full bg-black text-white py-3 rounded-full font-semibold hover:bg-gray-800 transition-colors font-handwritten">
+                                Add Habit
+                            </button>
+                            <button id="modal-cancel-add-btn" class="w-full bg-gray-100 text-gray-500 py-3 rounded-full font-semibold hover:bg-gray-200 transition-colors font-handwritten">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                this.openModal('Add New Habit', addModalHTML, false);
+                
+                const modalContent = this.els.modalContent;
+                const addBtn = modalContent.querySelector('#modal-add-habit-btn');
+                const cancelBtn = modalContent.querySelector('#modal-cancel-add-btn');
+                const titleInput = modalContent.querySelector('#new-habit-title-input');
+                
+                titleInput.focus();
+                
+                const handleAdd = () => {
+                    const title = titleInput.value.trim();
+                    if (title !== '') {
+                        Storage.addHabit(title);
+                        this.renderCalendar();
+                        this.closeModal();
+                        this.showNotification("New habit added!", "fire");
+                    }
+                };
+                
+                addBtn.addEventListener('click', handleAdd);
+                titleInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') handleAdd();
+                });
+                cancelBtn.addEventListener('click', () => this.closeModal());
+            });
+        }
     }
 };
 
